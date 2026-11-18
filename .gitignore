@@ -1,0 +1,18 @@
+# --- Power BI Project (.pbip) local/cache files ---
+# Machine-specific or regenerated when the project opens; never commit them.
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+
+# Office temp / lock files (created while a workbook is open)
+~$*
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor folders
+.vscode/
+.idea/
+./data/raw
