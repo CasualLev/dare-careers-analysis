@@ -1,0 +1,75 @@
+table Assessment
+	lineageTag: 73ac541d-96ca-4e2b-a7af-a11c48763960
+
+	column Track
+		dataType: string
+		lineageTag: df5ae1e7-affe-4f4a-ab1b-b08533dc3cbd
+		summarizeBy: none
+		sourceColumn: Track
+
+		annotation SummarizationSetBy = Automatic
+
+	column AssessmentType
+		dataType: string
+		lineageTag: 3dd90a71-d2f0-471d-9632-fcaa2c9254da
+		summarizeBy: none
+		sourceColumn: AssessmentType
+
+		annotation SummarizationSetBy = Automatic
+
+	column Email
+		dataType: string
+		lineageTag: 14517f66-8f8f-4eb3-af22-2bd49518ea4e
+		summarizeBy: none
+		sourceColumn: Email
+
+		annotation SummarizationSetBy = Automatic
+
+	column Week
+		dataType: int64
+		formatString: 0
+		lineageTag: 53fdde26-d727-448d-ba38-985a2d3a8fbb
+		summarizeBy: sum
+		sourceColumn: Week
+
+		annotation SummarizationSetBy = Automatic
+
+	column Score
+		dataType: int64
+		formatString: 0
+		lineageTag: b537f219-3c33-461b-80a6-bdf7514f2033
+		summarizeBy: sum
+		sourceColumn: Score
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Assessment = m
+		mode: import
+		source =
+				let
+				    Source = Folder.Files(DataRoot),
+				    #"Filtered Rows" = Table.SelectRows(Source, each Text.Contains([Folder Path], "labs_quizzes")),
+				    #"Added Custom" = Table.AddColumn(#"Filtered Rows", "Track", each if Text.Contains([Folder Path], "cloud", Comparer.OrdinalIgnoreCase) then "AWS Cloud" else "Power BI"),
+				    #"Added Custom1" = Table.AddColumn(#"Added Custom", "Sheets", each Excel.Workbook([Content], true)),
+				    #"Removed Other Columns" = Table.SelectColumns(#"Added Custom1",{"Track", "Sheets"}),
+				    #"Expanded Sheets" = Table.ExpandTableColumn(#"Removed Other Columns", "Sheets", {"Name", "Data", "Kind"}, {"Name", "Data", "Kind"}),
+				    #"Filtered Rows1" = Table.SelectRows(#"Expanded Sheets", each true),
+				    #"Removed Columns" = Table.RemoveColumns(#"Filtered Rows1",{"Kind"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns",{{"Name", "AssessmentType"}}),
+				    #"Replaced Value" = Table.ReplaceValue(#"Renamed Columns","Labs","Lab",Replacer.ReplaceText,{"AssessmentType"}),
+				    #"Replaced Value1" = Table.ReplaceValue(#"Replaced Value","Quizzes","Quiz",Replacer.ReplaceText,{"AssessmentType"}),
+				    #"Expanded Data" = Table.ExpandTableColumn(#"Replaced Value1", "Data", {"email", "Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7", "Week 8", "Week 9", "Week 10"}, {"email", "Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7", "Week 8", "Week 9", "Week 10"}),
+				    #"Unpivoted Other Columns" = Table.UnpivotOtherColumns(#"Expanded Data", {"Track", "AssessmentType", "email"}, "Attribute", "Value"),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Unpivoted Other Columns",{{"Attribute", "Week"}, {"Value", "Score"}}),
+				    #"Replaced Value2" = Table.ReplaceValue(#"Renamed Columns1","Week ","",Replacer.ReplaceText,{"Week"}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Replaced Value2",{{"Week", Int64.Type}, {"Score", Int64.Type}}),
+				    #"Renamed Columns2" = Table.RenameColumns(#"Changed Type",{{"email", "Email"}}),
+				    #"Trimmed Text" = Table.TransformColumns(#"Renamed Columns2",{{"Email", Text.Trim, type text}}),
+				    #"Lowercased Text" = Table.TransformColumns(#"Trimmed Text",{{"Email", Text.Lower, type text}})
+				in
+				    #"Lowercased Text"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

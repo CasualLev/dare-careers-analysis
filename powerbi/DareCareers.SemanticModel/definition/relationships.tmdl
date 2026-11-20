@@ -16,3 +16,7 @@ relationship AutoDetected_c2102d6c-dfab-4b9f-880c-654d6b94eff3
 	fromColumn: Participation.Email
 	toColumn: Learners.Email
 
+relationship AutoDetected_15d39e6a-dd5f-4383-aadd-106fcc9eaa3e
+	fromColumn: Assessment.Email
+	toColumn: Learners.Email
+
