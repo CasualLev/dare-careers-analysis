@@ -1,0 +1,18 @@
+relationship cd3146e6-28e6-4565-90b4-301b7f610447
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Attendance.Date
+	toColumn: LocalDateTable_d92b2c32-5980-49bc-bdb1-02e7137dcfeb.Date
+
+relationship f1eef0ae-2f15-4593-8300-375afa932bae
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Participation.Date
+	toColumn: LocalDateTable_0a017749-364f-47f0-b591-15c4cbd9d8da.Date
+
+relationship AutoDetected_6c601b10-0376-4ff5-89a4-9987ca5d9f6b
+	fromColumn: Attendance.Email
+	toColumn: Learners.Email
+
+relationship AutoDetected_c2102d6c-dfab-4b9f-880c-654d6b94eff3
+	fromColumn: Participation.Email
+	toColumn: Learners.Email
+

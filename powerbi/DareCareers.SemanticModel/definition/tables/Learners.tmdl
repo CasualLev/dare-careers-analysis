@@ -1,0 +1,46 @@
+table Learners
+	lineageTag: a3561dd7-b0a9-484c-903c-4220b1a09134
+
+	column LearnerName
+		dataType: string
+		lineageTag: 6f5ea719-dd8a-4539-bec5-96a7c73c228e
+		summarizeBy: none
+		sourceColumn: LearnerName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Email
+		dataType: string
+		lineageTag: f37359bb-a496-4aab-b236-8bd3951a23ce
+		summarizeBy: none
+		sourceColumn: Email
+
+		annotation SummarizationSetBy = Automatic
+
+	column Track
+		dataType: string
+		lineageTag: a54e8232-c75d-47e5-ac45-bba0eba5aaad
+		summarizeBy: none
+		sourceColumn: Track
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Learners = m
+		mode: import
+		source =
+				let
+				    Source = ZoomStaging,
+				    #"Renamed Columns" = Table.RenameColumns(Source,{{"Name.1", "LearnerName"}}),
+				    #"Added Custom" = Table.AddColumn(#"Renamed Columns", "Track", each if Text.Contains([Folder Path], "cloud", Comparer.OrdinalIgnoreCase) then "AWS Cloud" else "Power BI"),
+				    #"Trimmed Text" = Table.TransformColumns(#"Added Custom",{{"Email", Text.Trim, type text}}),
+				    #"Lowercased Text" = Table.TransformColumns(#"Trimmed Text",{{"Email", Text.Lower, type text}}),
+				    #"Removed Other Columns" = Table.SelectColumns(#"Lowercased Text",{"LearnerName", "Email", "Track"}),
+				    #"Removed Duplicates" = Table.Distinct(#"Removed Other Columns"),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Removed Duplicates",{{"LearnerName", type text}, {"Track", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

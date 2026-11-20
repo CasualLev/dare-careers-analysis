@@ -1,0 +1,88 @@
+table Attendance
+	lineageTag: b6467ebb-b686-481f-a182-91839dfab250
+
+	column Email
+		dataType: string
+		lineageTag: a53bd37c-35ae-4224-ba6d-dbbf29adb4c4
+		summarizeBy: none
+		sourceColumn: Email
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 573766b1-2303-45cb-b2a2-27562198665c
+		summarizeBy: none
+		sourceColumn: Date
+
+		variation Variation
+			isDefault
+			relationship: cd3146e6-28e6-4565-90b4-301b7f610447
+			defaultHierarchy: LocalDateTable_d92b2c32-5980-49bc-bdb1-02e7137dcfeb.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Week
+		dataType: int64
+		formatString: 0
+		lineageTag: dcf8e892-dd55-497a-ae80-8f5ee176542d
+		summarizeBy: sum
+		sourceColumn: Week
+
+		annotation SummarizationSetBy = Automatic
+
+	column Track
+		dataType: string
+		lineageTag: 7b30835f-dfce-4820-8aae-df08cb545b65
+		summarizeBy: none
+		sourceColumn: Track
+
+		annotation SummarizationSetBy = Automatic
+
+	column DurationMinutes
+		dataType: int64
+		formatString: 0
+		lineageTag: 27ec4983-c9e7-469a-8b05-d4cd7232612a
+		summarizeBy: sum
+		sourceColumn: DurationMinutes
+
+		annotation SummarizationSetBy = Automatic
+
+	column Attended
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 9976ff2d-0bff-4f0e-8ebf-0bfd3960b438
+		summarizeBy: none
+		sourceColumn: Attended
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Attendance = m
+		mode: import
+		source =
+				let
+				    Source = ZoomStaging,
+				    #"Renamed Columns" = Table.RenameColumns(Source,{{"Name", "Date"}}),
+				    #"Replaced Value" = Table.ReplaceValue(#"Renamed Columns",".csv","",Replacer.ReplaceText,{"Date"}),
+				    #"Changed Type with Locale" = Table.TransformColumnTypes(#"Replaced Value", {{"Date", type date}}, "en-US"),
+				    #"Added Custom1" = Table.AddColumn(#"Changed Type with Locale", "Track", each if Text.Contains([Folder Path], "cloud", Comparer.OrdinalIgnoreCase) then "AWS Cloud" else "Power BI"),
+				    #"Added Custom2" = Table.AddColumn(#"Added Custom1", "Week", each Number.From(Text.BetweenDelimiters([Folder Path], "Week ", "\"))),
+				    #"Added Custom3" = Table.AddColumn(#"Added Custom2", "DurationMinutes", each if Text.Contains([Duration], ":")
+				then Duration.TotalMinutes(Duration.FromText([Duration]))
+				else Number.From([Duration])),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Added Custom3",{{"Track", type text}, {"Week", Int64.Type}, {"DurationMinutes", Int64.Type}}),
+				    #"Added Custom4" = Table.AddColumn(#"Changed Type", "Attended", each [DurationMinutes] > 30),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Added Custom4",{{"Attended", type logical}}),
+				    #"Trimmed Text" = Table.TransformColumns(#"Changed Type1",{{"Email", Text.Trim, type text}}),
+				    #"Lowercased Text" = Table.TransformColumns(#"Trimmed Text",{{"Email", Text.Lower, type text}}),
+				    #"Removed Other Columns1" = Table.SelectColumns(#"Lowercased Text",{"Email", "Date", "Week", "Track", "DurationMinutes", "Attended"})
+				in
+				    #"Removed Other Columns1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

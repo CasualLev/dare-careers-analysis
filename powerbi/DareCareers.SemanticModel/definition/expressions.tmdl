@@ -1,0 +1,22 @@
+expression DataRoot = "C:\Users\USER\Projects\dare-careers-analysis\data\raw" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 19028d29-a761-47b3-b156-0a7fbee2881b
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+
+expression ZoomStaging =
+		let
+		    Source = Folder.Files(DataRoot),
+		    #"Filtered Rows" = Table.SelectRows(Source, each ([Extension] = ".csv")),
+		    #"Added Custom" = Table.AddColumn(#"Filtered Rows", "Data", each Table.PromoteHeaders(Csv.Document([Content]))),
+		    #"Removed Other Columns" = Table.SelectColumns(#"Added Custom",{"Data", "Name", "Folder Path"}),
+		    #"Expanded Data" = Table.ExpandTableColumn(#"Removed Other Columns", "Data", {"Name", "Email", "Join Time", "Leave Time", "Duration", "Role"}, {"Name.1", "Email", "Join Time", "Leave Time", "Duration", "Role"})
+		in
+		    #"Expanded Data"
+	lineageTag: 097902d1-a370-46ac-ac48-35e8cea9d048
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

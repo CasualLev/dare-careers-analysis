@@ -7,7 +7,47 @@
         "x": 0,
         "y": 0
       },
-      "nodes": [],
+      "nodes": [
+        {
+          "location": {
+            "x": 568,
+            "y": 25
+          },
+          "nodeIndex": "Attendance",
+          "nodeLineageTag": "b6467ebb-b686-481f-a182-91839dfab250",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 334,
+            "y": 11
+          },
+          "nodeIndex": "Learners",
+          "nodeLineageTag": "a3561dd7-b0a9-484c-903c-4220b1a09134",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 50,
+            "y": 11
+          },
+          "nodeIndex": "Participation",
+          "nodeLineageTag": "65506a3f-e0c1-47b7-95dc-48c4a76c85df",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
       "name": "All tables",
       "zoomValue": 100,
       "pinKeyFieldsToTop": false,

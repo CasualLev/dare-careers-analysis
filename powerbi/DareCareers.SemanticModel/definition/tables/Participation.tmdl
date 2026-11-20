@@ -1,0 +1,62 @@
+table Participation
+	lineageTag: 65506a3f-e0c1-47b7-95dc-48c4a76c85df
+
+	column Email
+		dataType: string
+		lineageTag: 980bbab7-1094-470d-9dd0-69599080811a
+		summarizeBy: none
+		sourceColumn: Email
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 45071437-6892-4766-b5f2-01af65314459
+		summarizeBy: none
+		sourceColumn: Date
+
+		variation Variation
+			isDefault
+			relationship: f1eef0ae-2f15-4593-8300-375afa932bae
+			defaultHierarchy: LocalDateTable_0a017749-364f-47f0-b591-15c4cbd9d8da.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Track
+		dataType: string
+		lineageTag: 8c1498c1-be78-47d4-a652-ed8847a1763d
+		summarizeBy: none
+		sourceColumn: Track
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Participation = m
+		mode: import
+		source =
+				let
+				    Source = Folder.Files(DataRoot),
+				    #"Filtered Rows" = Table.SelectRows(Source, each Text.Contains([Folder Path], "participation")),
+				    #"Added Custom" = Table.AddColumn(#"Filtered Rows", "Data", each Excel.Workbook([Content], true){0}[Data]),
+				    #"Added Custom1" = Table.AddColumn(#"Added Custom", "Track", each if Text.Contains([Folder Path], "cloud", Comparer.OrdinalIgnoreCase) then "AWS Cloud" else "Power BI"),
+				    #"Removed Other Columns" = Table.SelectColumns(#"Added Custom1",{"Track", "Data"}),
+				    #"Expanded Data" = Table.ExpandTableColumn(#"Removed Other Columns", "Data", {"Date", "Participants"}, {"Date", "Participants"}),
+				    #"Split Column by Delimiter" = Table.ExpandListColumn(Table.TransformColumns(#"Expanded Data", {{"Participants", Splitter.SplitTextByDelimiter(",", QuoteStyle.Csv), let itemType = (type nullable text) meta [Serialized.Text = true] in type {itemType}}}), "Participants"),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Split Column by Delimiter",{{"Participants", type text}}),
+				    #"Trimmed Text" = Table.TransformColumns(#"Changed Type",{{"Participants", Text.Trim, type text}}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Trimmed Text",{{"Participants", "LearnerName"}}),
+				    #"Changed Type with Locale" = Table.TransformColumnTypes(#"Renamed Columns", {{"Date", type date}}, "en-US"),
+				    #"Merged Queries" = Table.NestedJoin(#"Changed Type with Locale", {"Track", "LearnerName"}, Learners, {"Track", "LearnerName"}, "Learners", JoinKind.LeftOuter),
+				    #"Expanded Learners" = Table.ExpandTableColumn(#"Merged Queries", "Learners", {"Email"}, {"Email"}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Expanded Learners",{"LearnerName"}),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Removed Columns",{"Email", "Date", "Track"}),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Reordered Columns",{{"Track", type text}})
+				in
+				    #"Changed Type1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
