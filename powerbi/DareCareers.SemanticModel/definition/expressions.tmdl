@@ -20,3 +20,30 @@ expression ZoomStaging =
 
 	annotation PBI_ResultType = Table
 
+expression fnTrack =
+		(folderPath as text) as text =>
+		    if Text.Contains(folderPath, "cloud", Comparer.OrdinalIgnoreCase) then "AWS Cloud" else "Power BI"
+	lineageTag: f0476ca8-316b-4bd0-a73e-dfaa5e7e8e2f
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Function
+
+expression Status =
+		let
+		    Source = Folder.Files(DataRoot),
+		    #"Filtered Rows" = Table.SelectRows(Source, each Text.Contains([Folder Path], "\status\")),
+		    #"Added Custom" = Table.AddColumn(#"Filtered Rows", "Data", each Excel.Workbook([Content], true){0} [Data]),
+		    #"Removed Other Columns" = Table.SelectColumns(#"Added Custom",{"Data"}),
+		    #"Expanded Data" = Table.ExpandTableColumn(#"Removed Other Columns", "Data", {"email", "Graduation Status", "Certification Status"}, {"email", "Graduation Status", "Certification Status"}),
+		    #"Renamed Columns" = Table.RenameColumns(#"Expanded Data",{{"email", "Email"}}),
+		    #"Trimmed Text" = Table.TransformColumns(#"Renamed Columns",{{"Email", Text.Trim, type text}}),
+		    #"Lowercased Text" = Table.TransformColumns(#"Trimmed Text",{{"Email", Text.Lower, type text}})
+		in
+		    #"Lowercased Text"
+	lineageTag: 07948b65-8561-4498-bd13-694aa24a27e1
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

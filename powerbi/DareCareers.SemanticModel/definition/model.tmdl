@@ -11,7 +11,7 @@ annotation __PBI_TimeIntelligenceEnabled = 1
 
 annotation PBI_ProTooling = ["DevMode"]
 
-annotation PBI_QueryOrder = ["DataRoot","Attendance","ZoomStaging","Learners","Participation","Assessment"]
+annotation PBI_QueryOrder = ["DataRoot","Attendance","ZoomStaging","Learners","Participation","Assessment","fnTrack","Status"]
 
 ref table Attendance
 ref table DateTableTemplate_a1417e52-72ce-42a9-b4b6-4396bb91ced1

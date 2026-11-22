@@ -53,7 +53,7 @@ table Assessment
 				    #"Added Custom1" = Table.AddColumn(#"Added Custom", "Sheets", each Excel.Workbook([Content], true)),
 				    #"Removed Other Columns" = Table.SelectColumns(#"Added Custom1",{"Track", "Sheets"}),
 				    #"Expanded Sheets" = Table.ExpandTableColumn(#"Removed Other Columns", "Sheets", {"Name", "Data", "Kind"}, {"Name", "Data", "Kind"}),
-				    #"Filtered Rows1" = Table.SelectRows(#"Expanded Sheets", each true),
+				    #"Filtered Rows1" = Table.SelectRows(#"Expanded Sheets", each [Kind] = "Sheet"),
 				    #"Removed Columns" = Table.RemoveColumns(#"Filtered Rows1",{"Kind"}),
 				    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns",{{"Name", "AssessmentType"}}),
 				    #"Replaced Value" = Table.ReplaceValue(#"Renamed Columns","Labs","Lab",Replacer.ReplaceText,{"AssessmentType"}),

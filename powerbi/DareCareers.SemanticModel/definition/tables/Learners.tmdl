@@ -25,6 +25,30 @@ table Learners
 
 		annotation SummarizationSetBy = Automatic
 
+	column 'Graduation Status'
+		dataType: string
+		lineageTag: 275dc62e-94c9-4ee2-a5dc-751367ddef11
+		summarizeBy: none
+		sourceColumn: Graduation Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Certification Status'
+		dataType: string
+		lineageTag: b2a5e3f9-e3b4-401f-942b-80ccae4ed220
+		summarizeBy: none
+		sourceColumn: Certification Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Certification Type'
+		dataType: string
+		lineageTag: 9fda27d9-17a3-43cf-b0c1-59359853dab1
+		summarizeBy: none
+		sourceColumn: Certification Type
+
+		annotation SummarizationSetBy = Automatic
+
 	partition Learners = m
 		mode: import
 		source =
@@ -36,9 +60,13 @@ table Learners
 				    #"Lowercased Text" = Table.TransformColumns(#"Trimmed Text",{{"Email", Text.Lower, type text}}),
 				    #"Removed Other Columns" = Table.SelectColumns(#"Lowercased Text",{"LearnerName", "Email", "Track"}),
 				    #"Removed Duplicates" = Table.Distinct(#"Removed Other Columns"),
-				    #"Changed Type" = Table.TransformColumnTypes(#"Removed Duplicates",{{"LearnerName", type text}, {"Track", type text}})
+				    #"Changed Type" = Table.TransformColumnTypes(#"Removed Duplicates",{{"LearnerName", type text}, {"Track", type text}}),
+				    #"Merged Queries" = Table.NestedJoin(#"Changed Type", {"Email"}, Status, {"Email"}, "Status", JoinKind.LeftOuter),
+				    #"Expanded Status" = Table.ExpandTableColumn(#"Merged Queries", "Status", {"Graduation Status", "Certification Status"}, {"Graduation Status", "Certification Status"}),
+				    #"Added Custom1" = Table.AddColumn(#"Expanded Status", "Certification Type", each if [Track] = "AWS Cloud" then "AWS" else "Power BI"),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Added Custom1",{{"Certification Type", type text}})
 				in
-				    #"Changed Type"
+				    #"Changed Type1"
 
 	annotation PBI_NavigationStepName = Navigation
 
