@@ -49,6 +49,57 @@ table Learners
 
 		annotation SummarizationSetBy = Automatic
 
+	column FirstClass
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: e7d70067-cd31-4adb-8ad2-ca5cd691ee17
+		summarizeBy: none
+		sourceColumn: FirstClass
+
+		variation Variation
+			isDefault
+			relationship: fd211660-67d3-42c9-8f5b-9a19880038c4
+			defaultHierarchy: LocalDateTable_418f6be9-d9f6-430d-866c-e3301a1eacc1.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column SessionsAttended
+		dataType: int64
+		formatString: 0
+		lineageTag: d8ca76c0-9f12-4722-a0c7-545e3f1561e5
+		summarizeBy: sum
+		sourceColumn: SessionsAttended
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cohort
+		dataType: string
+		lineageTag: 04772cff-8fec-424c-b87b-5705f20e0e59
+		summarizeBy: none
+		sourceColumn: Cohort
+
+		annotation SummarizationSetBy = Automatic
+
+	column SessionsHeld
+		dataType: int64
+		formatString: 0
+		lineageTag: e9aa3820-3850-45d8-86aa-a7af23d125ed
+		summarizeBy: sum
+		sourceColumn: SessionsHeld
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Is Dropout'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: bd5822c7-7f86-4f9f-96d6-2d1659c1a350
+		summarizeBy: none
+		sourceColumn: Is Dropout
+
+		annotation SummarizationSetBy = Automatic
+
 	partition Learners = m
 		mode: import
 		source =
@@ -64,9 +115,26 @@ table Learners
 				    #"Merged Queries" = Table.NestedJoin(#"Changed Type", {"Email"}, Status, {"Email"}, "Status", JoinKind.LeftOuter),
 				    #"Expanded Status" = Table.ExpandTableColumn(#"Merged Queries", "Status", {"Graduation Status", "Certification Status"}, {"Graduation Status", "Certification Status"}),
 				    #"Added Custom1" = Table.AddColumn(#"Expanded Status", "Certification Type", each if [Track] = "AWS Cloud" then "AWS" else "Power BI"),
-				    #"Changed Type1" = Table.TransformColumnTypes(#"Added Custom1",{{"Certification Type", type text}})
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Added Custom1",{{"Certification Type", type text}}),
+				    #"Merged Queries1" = Table.NestedJoin(#"Changed Type1", {"Email"}, AttendanceSummary, {"Email"}, "AttendanceSummary", JoinKind.LeftOuter),
+				    #"Expanded AttendanceSummary" = Table.ExpandTableColumn(#"Merged Queries1", "AttendanceSummary", {"FirstClass", "SessionsAttended"}, {"FirstClass", "SessionsAttended"}),
+				    #"Added Custom2" = Table.AddColumn(#"Expanded AttendanceSummary", "Cohort", each let d = [FirstClass] in
+				List.First(
+				    Table.SelectRows(Cohorts, each d >= [StartDate] and d <= [EndDate])[CohortName],
+				    null)),
+				    #"Merged Queries2" = Table.NestedJoin(#"Added Custom2", {"Cohort"}, Cohorts, {"CohortName"}, "Cohorts", JoinKind.LeftOuter),
+				    #"Expanded Cohorts" = Table.ExpandTableColumn(#"Merged Queries2", "Cohorts", {"StartDate", "EndDate"}, {"StartDate", "EndDate"}),
+				    #"Added Custom3" = Table.AddColumn(#"Expanded Cohorts", "SessionsHeld", each let t = [Track], s = [StartDate], e = [EndDate] in
+				List.Count(List.Distinct(
+				    Table.SelectRows(Attendance, each [Track] = t and [Date] >= s and [Date] <= e)[Date]))),
+				    #"Added Custom4" = Table.AddColumn(#"Added Custom3", "Is Dropout", each [Graduation Status] = "Non Graduate"
+				    and [Certification Status] = "Not Certified"
+				    and [SessionsAttended] < [SessionsHeld]),
+				    #"Changed Type2" = Table.TransformColumnTypes(#"Added Custom4",{{"Is Dropout", type logical}, {"SessionsHeld", Int64.Type}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type2",{"StartDate", "EndDate"}),
+				    #"Changed Type3" = Table.TransformColumnTypes(#"Removed Columns",{{"Certification Status", type text}, {"Graduation Status", type text}})
 				in
-				    #"Changed Type1"
+				    #"Changed Type3"
 
 	annotation PBI_NavigationStepName = Navigation
 

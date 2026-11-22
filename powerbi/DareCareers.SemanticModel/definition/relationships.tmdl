@@ -20,3 +20,22 @@ relationship AutoDetected_15d39e6a-dd5f-4383-aadd-106fcc9eaa3e
 	fromColumn: Assessment.Email
 	toColumn: Learners.Email
 
+relationship 5781c262-dd96-4122-bb03-97f7d2d7c6b6
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Cohorts.StartDate
+	toColumn: LocalDateTable_e2561973-3f77-456d-8282-6f8661f90a11.Date
+
+relationship a233db22-d562-4704-890c-512596acbe9e
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Cohorts.EndDate
+	toColumn: LocalDateTable_7e79777d-1677-4b6e-a05f-b2be9cd67869.Date
+
+relationship fd211660-67d3-42c9-8f5b-9a19880038c4
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Learners.FirstClass
+	toColumn: LocalDateTable_418f6be9-d9f6-430d-866c-e3301a1eacc1.Date
+
+relationship AutoDetected_868096ee-9f5f-4c35-a681-a5e536ce146b
+	fromColumn: Learners.Cohort
+	toColumn: Cohorts.CohortName
+

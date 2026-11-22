@@ -11,7 +11,7 @@ annotation __PBI_TimeIntelligenceEnabled = 1
 
 annotation PBI_ProTooling = ["DevMode"]
 
-annotation PBI_QueryOrder = ["DataRoot","Attendance","ZoomStaging","Learners","Participation","Assessment","fnTrack","Status"]
+annotation PBI_QueryOrder = ["DataRoot","Attendance","ZoomStaging","Learners","Participation","Assessment","fnTrack","Status","Cohorts","AttendanceSummary"]
 
 ref table Attendance
 ref table DateTableTemplate_a1417e52-72ce-42a9-b4b6-4396bb91ced1
@@ -20,6 +20,10 @@ ref table Learners
 ref table Participation
 ref table LocalDateTable_0a017749-364f-47f0-b591-15c4cbd9d8da
 ref table Assessment
+ref table Cohorts
+ref table LocalDateTable_e2561973-3f77-456d-8282-6f8661f90a11
+ref table LocalDateTable_7e79777d-1677-4b6e-a05f-b2be9cd67869
+ref table LocalDateTable_418f6be9-d9f6-430d-866c-e3301a1eacc1
 
 ref cultureInfo en-US
 

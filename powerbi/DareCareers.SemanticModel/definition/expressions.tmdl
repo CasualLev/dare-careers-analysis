@@ -47,3 +47,15 @@ expression Status =
 
 	annotation PBI_ResultType = Table
 
+expression AttendanceSummary =
+		let
+		    Source = Attendance,
+		    #"Grouped Rows" = Table.Group(Source, {"Email"}, {{"FirstClass", each List.Min([Date]), type nullable date}, {"SessionsAttended", each Table.RowCount(Table.SelectRows(_, each [Attended])), Int64.Type}})
+		in
+		    #"Grouped Rows"
+	lineageTag: 9a83aabc-5d81-4ee4-9535-da86f8cd28e7
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
