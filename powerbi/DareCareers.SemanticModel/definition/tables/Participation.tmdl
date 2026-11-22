@@ -3,23 +3,24 @@ table Participation
 
 	column Email
 		dataType: string
+		isHidden
 		lineageTag: 980bbab7-1094-470d-9dd0-69599080811a
 		summarizeBy: none
 		sourceColumn: Email
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column Date
 		dataType: dateTime
+		isHidden
 		formatString: Long Date
 		lineageTag: 45071437-6892-4766-b5f2-01af65314459
 		summarizeBy: none
 		sourceColumn: Date
 
-		variation Variation
-			isDefault
-			relationship: f1eef0ae-2f15-4593-8300-375afa932bae
-			defaultHierarchy: LocalDateTable_0a017749-364f-47f0-b591-15c4cbd9d8da.'Date Hierarchy'
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -27,11 +28,26 @@ table Participation
 
 	column Track
 		dataType: string
+		isHidden
 		lineageTag: 8c1498c1-be78-47d4-a652-ed8847a1763d
 		summarizeBy: none
 		sourceColumn: Track
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
+
+	column Week
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 1633e53f-01e7-4733-be3e-5796d5893673
+		summarizeBy: none
+		sourceColumn: Week
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
 
 	partition Participation = m
 		mode: import
@@ -52,9 +68,14 @@ table Participation
 				    #"Expanded Learners" = Table.ExpandTableColumn(#"Merged Queries", "Learners", {"Email"}, {"Email"}),
 				    #"Removed Columns" = Table.RemoveColumns(#"Expanded Learners",{"LearnerName"}),
 				    #"Reordered Columns" = Table.ReorderColumns(#"Removed Columns",{"Email", "Date", "Track"}),
-				    #"Changed Type1" = Table.TransformColumnTypes(#"Reordered Columns",{{"Track", type text}})
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Reordered Columns",{{"Track", type text}}),
+				    #"Merged Queries1" = Table.NestedJoin(#"Changed Type1", {"Email"}, LearnerCohortStart, {"Email"}, "LearnerCohortStart", JoinKind.LeftOuter),
+				    #"Expanded LearnerCohortStart" = Table.ExpandTableColumn(#"Merged Queries1", "LearnerCohortStart", {"StartDate"}, {"StartDate"}),
+				    #"Added Custom2" = Table.AddColumn(#"Expanded LearnerCohortStart", "Week", each Number.IntegerDivide(Duration.Days([Date] - [StartDate]), 7) + 1),
+				    #"Changed Type2" = Table.TransformColumnTypes(#"Added Custom2",{{"Week", Int64.Type}}),
+				    #"Removed Columns1" = Table.RemoveColumns(#"Changed Type2",{"StartDate"})
 				in
-				    #"Changed Type1"
+				    #"Removed Columns1"
 
 	annotation PBI_NavigationStepName = Navigation
 

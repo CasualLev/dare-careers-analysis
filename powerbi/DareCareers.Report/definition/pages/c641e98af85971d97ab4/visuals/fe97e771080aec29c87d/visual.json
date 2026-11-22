@@ -1,0 +1,102 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "fe97e771080aec29c87d",
+  "position": {
+    "x": 0,
+    "y": 156,
+    "z": 5000,
+    "height": 186,
+    "width": 1920,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Total Learners"
+                }
+              },
+              "queryRef": "_Measures.Total Learners",
+              "nativeQueryRef": "Learners",
+              "displayName": "Learners"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Total Graduations"
+                }
+              },
+              "queryRef": "_Measures.Total Graduations",
+              "nativeQueryRef": "Graduations",
+              "displayName": "Graduations"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Total Certifications"
+                }
+              },
+              "queryRef": "_Measures.Total Certifications",
+              "nativeQueryRef": "Certifications",
+              "displayName": "Certifications"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Total Dropouts"
+                }
+              },
+              "queryRef": "_Measures.Total Dropouts",
+              "nativeQueryRef": "Dropouts",
+              "displayName": "Dropouts"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "_Measures"
+                  }
+                },
+                "Property": "Total Learners"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

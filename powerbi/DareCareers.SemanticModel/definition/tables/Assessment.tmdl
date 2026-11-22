@@ -3,9 +3,12 @@ table Assessment
 
 	column Track
 		dataType: string
+		isHidden
 		lineageTag: df5ae1e7-affe-4f4a-ab1b-b08533dc3cbd
 		summarizeBy: none
 		sourceColumn: Track
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -19,20 +22,26 @@ table Assessment
 
 	column Email
 		dataType: string
+		isHidden
 		lineageTag: 14517f66-8f8f-4eb3-af22-2bd49518ea4e
 		summarizeBy: none
 		sourceColumn: Email
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column Week
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: 53fdde26-d727-448d-ba38-985a2d3a8fbb
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: Week
 
-		annotation SummarizationSetBy = Automatic
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
 
 	column Score
 		dataType: int64
@@ -42,6 +51,20 @@ table Assessment
 		sourceColumn: Score
 
 		annotation SummarizationSetBy = Automatic
+
+	column Date
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		lineageTag: 64af1ec1-839a-4cae-9e60-25a0018982a4
+		summarizeBy: none
+		sourceColumn: Date
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
 
 	partition Assessment = m
 		mode: import
@@ -65,9 +88,15 @@ table Assessment
 				    #"Changed Type" = Table.TransformColumnTypes(#"Replaced Value2",{{"Week", Int64.Type}, {"Score", Int64.Type}}),
 				    #"Renamed Columns2" = Table.RenameColumns(#"Changed Type",{{"email", "Email"}}),
 				    #"Trimmed Text" = Table.TransformColumns(#"Renamed Columns2",{{"Email", Text.Trim, type text}}),
-				    #"Lowercased Text" = Table.TransformColumns(#"Trimmed Text",{{"Email", Text.Lower, type text}})
+				    #"Lowercased Text" = Table.TransformColumns(#"Trimmed Text",{{"Email", Text.Lower, type text}}),
+				    #"Merged Queries" = Table.NestedJoin(#"Lowercased Text", {"Email"}, LearnerCohortStart, {"Email"}, "LearnerCohortStart", JoinKind.LeftOuter),
+				    #"Expanded LearnerCohortStart" = Table.ExpandTableColumn(#"Merged Queries", "LearnerCohortStart", {"StartDate"}, {"StartDate"}),
+				    #"Added Custom2" = Table.AddColumn(#"Expanded LearnerCohortStart", "Date", each Date.AddDays([StartDate], ([Week] - 1) * 7 + 4)),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Added Custom2",{{"Date", type date}}),
+				    #"Removed Columns1" = Table.RemoveColumns(#"Changed Type1",{"StartDate"}),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Removed Columns1",{"Email", "Date", "Week", "Track", "AssessmentType", "Score"})
 				in
-				    #"Lowercased Text"
+				    #"Reordered Columns"
 
 	annotation PBI_NavigationStepName = Navigation
 

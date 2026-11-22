@@ -1,0 +1,178 @@
+table _Measures
+	lineageTag: f8faeecd-eb99-4b0c-a766-5ebd63edbf47
+
+	measure 'Total Learners' = COUNTROWS( Learners )
+		formatString: 0
+		displayFolder: Learner Outcomes
+		lineageTag: ab502db3-c9ec-4d85-9fa5-3164dddebdc8
+
+	measure 'Total Graduations' =
+			
+			CALCULATE( [Total Learners], Learners[Graduation Status] = "Graduate" )
+		formatString: 0
+		displayFolder: Learner Outcomes
+		lineageTag: acb6c0ba-af09-405d-af49-85de71868556
+
+	measure 'Total Certifications' =
+			
+			CALCULATE( [Total Learners], Learners[Certification Status] = "Certified" )
+		formatString: 0
+		displayFolder: Learner Outcomes
+		lineageTag: 4865d7d8-556c-46ed-9913-b06e2f289a15
+
+	/// Non Graduate + Not Certified + missed at least one session (pending client confirmation).
+	measure 'Total Dropouts' =
+			
+			CALCULATE( [Total Learners], Learners[Is Dropout] = TRUE() )
+		formatString: 0
+		displayFolder: Learner Outcomes
+		lineageTag: c3bf6b47-8132-47a9-90a2-c09a14a2ccdc
+
+	measure 'Graduation Rate' = DIVIDE( [Total Graduations], [Total Learners] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Learner Outcomes
+		lineageTag: 869c4449-0ddd-40b0-a0f5-ccd36312c131
+
+	measure 'Certification Rate' = DIVIDE( [Total Certifications], [Total Learners] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Learner Outcomes
+		lineageTag: 27c6dd5f-075e-4a63-aeac-566a6a76f246
+
+	measure 'Dropout Rate' = DIVIDE( [Total Dropouts], [Total Learners] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Learner Outcomes
+		lineageTag: f277a4c6-b096-4a1a-b0e7-e163fa28a4da
+
+	measure 'Sessions Attended' =
+			
+			CALCULATE( COUNTROWS( Attendance ), Attendance[Attended] = TRUE() )
+		formatString: #,0
+		displayFolder: Attendance
+		lineageTag: db27d10d-82ef-41cf-8f97-7134ee6d7a79
+
+	measure 'Sessions Held' =
+			
+			CALCULATE(
+			    DISTINCTCOUNT( Attendance[Date] ),
+			    REMOVEFILTERS( Learners ),
+			    VALUES( Learners[Track] ),
+			    VALUES( Learners[Cohort] )
+			)
+		formatString: 0
+		displayFolder: Helpers
+		lineageTag: b15cf425-08f3-4be2-b0a6-bc9fdaecce0e
+
+	/// Average per learner of sessions attended (over 30 min) ÷ sessions held.
+	/// 
+	measure 'Attendance Rate' =
+			
+			AVERAGEX(
+			    Learners,
+			    DIVIDE( [Sessions Attended] + 0, [Sessions Held] )
+			)
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Attendance
+		lineageTag: f3fa5caa-a2e9-4687-b07c-38a58eea378f
+
+	measure 'Class Minutes Attended' =
+			
+			CALCULATE( SUM( Attendance[DurationMinutes] ), Attendance[Attended] = TRUE() )
+		formatString: 0
+		displayFolder: Helpers
+		lineageTag: 9358b86d-f7b2-4c14-8ef6-450d19b6454d
+
+	/// Hours from sessions over 30 min only.
+	measure 'Total Hours in Class' = DIVIDE( [Class Minutes Attended], 60 )
+		formatString: #,0.0
+		displayFolder: Attendance
+		lineageTag: bf39f811-1c50-4073-bcb1-0d505359e05a
+
+	measure 'Avg Hours per Learner' = DIVIDE( [Total Hours in Class], [Total Learners] )
+		formatString: 0.0
+		displayFolder: Attendance
+		lineageTag: 508b6935-09ee-4d6e-bf2c-59854713b15c
+
+	measure 'Session Length (min)' = ```
+			120
+			
+			```
+		formatString: 0
+		displayFolder: Helpers
+		lineageTag: 8cee8457-f7c4-4eee-9c0f-400132314d22
+
+	/// Average per learner of minutes attended ÷ (sessions held × 120 min). Only sessions over 30 min count.
+	measure 'Class Time Attended %' =
+			
+			AVERAGEX(
+			    Learners,
+			    DIVIDE( [Class Minutes Attended] + 0, [Sessions Held] * [Session Length (min)] )
+			)
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Attendance
+		lineageTag: 662ce0f2-6991-45bd-a3d2-6b2eff479013
+
+	measure 'Days Participated' = COUNTROWS( Participation )
+		formatString: #,0
+		displayFolder: Participation
+		lineageTag: 7926e45c-0527-415d-8ed9-2ac9914980e7
+
+	measure 'Participation Rate' =
+			
+			AVERAGEX(
+			    Learners,
+			    DIVIDE( [Days Participated] + 0, [Sessions Held] )
+			)
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Participation
+		lineageTag: 90dbd8ac-cbdb-4679-9b89-b771c2adc585
+
+	measure 'Average Assessment Score' = AVERAGE( Assessment[Score] )
+		formatString: 0.0
+		displayFolder: Assessments
+		lineageTag: 1cc8d8a7-2cc7-4879-bd50-838d1531c058
+
+	measure 'Average Lab Score' =
+			
+			CALCULATE( [Average Assessment Score], Assessment[AssessmentType] = "Lab" )
+		formatString: 0.0
+		displayFolder: Assessments
+		lineageTag: aa775851-c173-4165-81bf-88145e92c687
+
+	measure 'Average Quiz Score' =
+			
+			CALCULATE( [Average Assessment Score], Assessment[AssessmentType] = "Quiz" )
+		formatString: 0.0
+		displayFolder: Assessments
+		lineageTag: c9d27dd7-69db-46b7-abff-4c90d261f72d
+
+	/// Lab rows with score > 0; a 0 is treated as not submitted.
+	measure 'Labs Completed' =
+			
+			CALCULATE(
+			    COUNTROWS( Assessment ),
+			    Assessment[AssessmentType] = "Lab",
+			    Assessment[Score] > 0
+			)
+		formatString: #,0.00
+		displayFolder: Assessments
+		lineageTag: 18c6dd99-fcc8-434a-9821-e4edd918a7d4
+
+	measure 'Avg Labs Completed per Learner' =
+			
+			AVERAGEX( Learners, [Labs Completed] + 0 )
+		formatString: 0.00
+		displayFolder: Assessments
+		lineageTag: 2465019d-ec8e-435a-a16f-fad70051f260
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

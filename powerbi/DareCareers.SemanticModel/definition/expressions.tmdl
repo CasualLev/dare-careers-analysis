@@ -59,3 +59,17 @@ expression AttendanceSummary =
 
 	annotation PBI_ResultType = Table
 
+expression LearnerCohortStart =
+		let
+		    Source = Learners,
+		    #"Merged Queries" = Table.NestedJoin(Source, {"Cohort"}, Cohorts, {"CohortName"}, "Cohorts", JoinKind.LeftOuter),
+		    #"Expanded Cohorts" = Table.ExpandTableColumn(#"Merged Queries", "Cohorts", {"StartDate"}, {"StartDate"}),
+		    #"Removed Other Columns" = Table.SelectColumns(#"Expanded Cohorts",{"Email", "StartDate"})
+		in
+		    #"Removed Other Columns"
+	lineageTag: f5a5b098-66cc-4eab-8ea6-c33c47e65ec1
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

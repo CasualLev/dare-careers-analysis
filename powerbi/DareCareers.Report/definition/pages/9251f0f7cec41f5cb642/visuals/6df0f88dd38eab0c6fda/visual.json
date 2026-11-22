@@ -1,0 +1,214 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "6df0f88dd38eab0c6fda",
+  "position": {
+    "x": 0,
+    "y": 292,
+    "z": 7,
+    "height": 164,
+    "width": 1920,
+    "tabOrder": 7
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Labs Completed"
+                }
+              },
+              "queryRef": "_Measures.Labs Completed",
+              "nativeQueryRef": "Labs Completed"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Avg Labs Completed per Learner"
+                }
+              },
+              "queryRef": "_Measures.Avg Labs Completed per Learner",
+              "nativeQueryRef": "Avg Labs Completed per Learner"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Total Hours in Class"
+                }
+              },
+              "queryRef": "_Measures.Total Hours in Class",
+              "nativeQueryRef": "Total Hours in Class"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Attendance Rate"
+                }
+              },
+              "queryRef": "_Measures.Attendance Rate",
+              "nativeQueryRef": "Attendance Rate"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Participation Rate"
+                }
+              },
+              "queryRef": "_Measures.Participation Rate",
+              "nativeQueryRef": "Participation Rate"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Average Assessment Score"
+                }
+              },
+              "queryRef": "_Measures.Average Assessment Score",
+              "nativeQueryRef": "Average Assessment Score"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "_Measures"
+                  }
+                },
+                "Property": "Labs Completed"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "ba65bc397a80c1390ae1",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Labs Completed"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "95e7f3ddfe9bf07b7ec6",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Avg Labs Completed per Learner"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "c1411e51c85db646a7fe",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Total Hours in Class"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "300dbe3a3690f424940d",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Attendance Rate"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "92197a37bb1907a2731f",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Participation Rate"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "1ddec6b6f3d0ccf0794d",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Average Assessment Score"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
+}

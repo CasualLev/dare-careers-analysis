@@ -1,0 +1,57 @@
+table Date
+	lineageTag: d1581eb2-9dc9-4b19-a6ad-68ed7382557b
+	dataCategory: Time
+
+	column Date
+		isKey
+		formatString: Long Date
+		lineageTag: 6118dce6-d64d-4db1-aa99-5dc61e16e1d3
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Year
+		formatString: 0
+		lineageTag: 5ab53926-15d8-44d7-b67e-e8acb29c8908
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Year]
+
+		annotation SummarizationSetBy = User
+
+	column Month
+		lineageTag: f5dc2a43-2f14-483b-bb24-7e38860eea94
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Month]
+		sortByColumn: 'Month Sort'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Sort'
+		isHidden
+		formatString: 0
+		lineageTag: 03bf9f6b-37f9-423e-8564-6ee6b265ed60
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Month Sort]
+
+		annotation SummarizationSetBy = User
+
+	partition Date = calculated
+		mode: import
+		source =
+				
+				ADDCOLUMNS(
+				    CALENDAR( MIN( Cohorts[StartDate] ), MAX( Cohorts[EndDate] ) ),
+				    "Year", YEAR( [Date] ),
+				    "Month", FORMAT( [Date], "mmm yyyy" ),
+				    "Month Sort", YEAR( [Date] ) * 100 + MONTH( [Date] )
+				)
+
+	annotation PBI_Id = 443af22d75a44013b455415851c055aa
+

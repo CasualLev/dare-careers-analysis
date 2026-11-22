@@ -1,13 +1,3 @@
-relationship cd3146e6-28e6-4565-90b4-301b7f610447
-	joinOnDateBehavior: datePartOnly
-	fromColumn: Attendance.Date
-	toColumn: LocalDateTable_d92b2c32-5980-49bc-bdb1-02e7137dcfeb.Date
-
-relationship f1eef0ae-2f15-4593-8300-375afa932bae
-	joinOnDateBehavior: datePartOnly
-	fromColumn: Participation.Date
-	toColumn: LocalDateTable_0a017749-364f-47f0-b591-15c4cbd9d8da.Date
-
 relationship AutoDetected_6c601b10-0376-4ff5-89a4-9987ca5d9f6b
 	fromColumn: Attendance.Email
 	toColumn: Learners.Email
@@ -20,22 +10,31 @@ relationship AutoDetected_15d39e6a-dd5f-4383-aadd-106fcc9eaa3e
 	fromColumn: Assessment.Email
 	toColumn: Learners.Email
 
-relationship 5781c262-dd96-4122-bb03-97f7d2d7c6b6
-	joinOnDateBehavior: datePartOnly
-	fromColumn: Cohorts.StartDate
-	toColumn: LocalDateTable_e2561973-3f77-456d-8282-6f8661f90a11.Date
-
-relationship a233db22-d562-4704-890c-512596acbe9e
-	joinOnDateBehavior: datePartOnly
-	fromColumn: Cohorts.EndDate
-	toColumn: LocalDateTable_7e79777d-1677-4b6e-a05f-b2be9cd67869.Date
-
-relationship fd211660-67d3-42c9-8f5b-9a19880038c4
-	joinOnDateBehavior: datePartOnly
-	fromColumn: Learners.FirstClass
-	toColumn: LocalDateTable_418f6be9-d9f6-430d-866c-e3301a1eacc1.Date
-
 relationship AutoDetected_868096ee-9f5f-4c35-a681-a5e536ce146b
 	fromColumn: Learners.Cohort
 	toColumn: Cohorts.CohortName
+
+relationship 601c000a-f963-c231-3d50-1c1e37149c27
+	fromColumn: Attendance.Date
+	toColumn: Date.Date
+
+relationship 4122cc97-c31b-e0d1-7ef4-9f45d322d230
+	fromColumn: Participation.Date
+	toColumn: Date.Date
+
+relationship d60750b3-6d08-5f9a-787c-9c8da3a80e63
+	fromColumn: Assessment.Date
+	toColumn: Date.Date
+
+relationship b0e3face-5f55-d9f3-4988-cd2eb39bf453
+	fromColumn: Assessment.Week
+	toColumn: Weeks.Week
+
+relationship a32fe260-123f-f1e2-46a3-013d2a65a5dd
+	fromColumn: Participation.Week
+	toColumn: Weeks.Week
+
+relationship 6e5fbc4a-fb06-e797-31a8-23d1a6050755
+	fromColumn: Attendance.Week
+	toColumn: Weeks.Week
 

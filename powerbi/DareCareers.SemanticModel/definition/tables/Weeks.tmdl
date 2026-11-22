@@ -1,0 +1,34 @@
+table Weeks
+	lineageTag: 844c55e5-6d10-4a6b-a848-5184d6569562
+
+	column Week
+		formatString: 0
+		lineageTag: a3ade78c-e8d0-4d5b-9dbd-cef0f4f4da47
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: Attendance[Week]
+
+		annotation SummarizationSetBy = User
+
+	column 'Week Label' = "Week " & Weeks[Week]
+		isHidden
+		lineageTag: a8dfaf44-4473-475c-a5a6-caac4d150345
+		summarizeBy: none
+		sortByColumn: Week
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Weeks = calculated
+		mode: import
+		source =
+				
+				DISTINCT(
+				    UNION(
+				        DISTINCT( Attendance[Week] ),
+				        DISTINCT( Participation[Week] ),
+				        DISTINCT( Assessment[Week] )
+				    )
+				)
+
+	annotation PBI_Id = e3c30280ca2347629ea15ee0f544f110
+

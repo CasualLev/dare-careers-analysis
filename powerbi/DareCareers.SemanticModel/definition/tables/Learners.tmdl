@@ -51,15 +51,13 @@ table Learners
 
 	column FirstClass
 		dataType: dateTime
+		isHidden
 		formatString: Long Date
 		lineageTag: e7d70067-cd31-4adb-8ad2-ca5cd691ee17
 		summarizeBy: none
 		sourceColumn: FirstClass
 
-		variation Variation
-			isDefault
-			relationship: fd211660-67d3-42c9-8f5b-9a19880038c4
-			defaultHierarchy: LocalDateTable_418f6be9-d9f6-430d-866c-e3301a1eacc1.'Date Hierarchy'
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -67,10 +65,13 @@ table Learners
 
 	column SessionsAttended
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: d8ca76c0-9f12-4722-a0c7-545e3f1561e5
 		summarizeBy: sum
 		sourceColumn: SessionsAttended
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -84,10 +85,13 @@ table Learners
 
 	column SessionsHeld
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: e9aa3820-3850-45d8-86aa-a7af23d125ed
 		summarizeBy: sum
 		sourceColumn: SessionsHeld
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
